@@ -6,14 +6,15 @@ import com.chuan.on_my_way.entity.Employee;
 import com.chuan.on_my_way.service.EmployeeService;
 import com.chuan.on_my_way.utility.R;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -29,7 +30,7 @@ public class EmployeeController {
      * @param employee
      * @return
      */
-    @RequestMapping("/login")
+    @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
 
         String password = employee.getPassword();
@@ -60,10 +61,27 @@ public class EmployeeController {
      * @param request
      * @return
      */
-    @RequestMapping("/logout")
+    @PostMapping("/logout")
     public R<String> logout(HttpServletRequest request){
         request.getSession().removeAttribute("employee");
         return R.success("Logout Successfully");
+    }
+
+
+
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+        log.info("");
+        String password = "123456";
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        employee.setPassword(password);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        Long userId = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(userId);
+        employee.setUpdateUser(userId);
+        employeeService.save(employee);
+        return R.success("New employee added!!");
     }
 
 }
