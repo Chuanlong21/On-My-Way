@@ -2,15 +2,14 @@ package com.chuan.on_my_way.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chuan.on_my_way.entity.Employee;
 import com.chuan.on_my_way.service.EmployeeService;
 import com.chuan.on_my_way.utility.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -82,6 +81,19 @@ public class EmployeeController {
         employee.setUpdateUser(userId);
         employeeService.save(employee);
         return R.success("New employee added!!");
+    }
+
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name){
+
+        Page pageInfo = new Page(page,pageSize);
+
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+
+        employeeService.page(pageInfo,queryWrapper);
+        return R.success(pageInfo);
     }
 
 }
