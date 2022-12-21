@@ -45,7 +45,7 @@
           label="Type"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.type == '1' ? 'Food Category': 'Combo Category' }}</span>
+            <span>{{ scope.row.type == '1' ? 'Dish': 'Combo' }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -159,7 +159,7 @@
             tableData: [],
             type :'',
             classData: {
-              'title': 'Add Food Category',
+              'title': 'Add Dish Category',
               'dialogVisible': false,
               'categoryId': '',
               'name': '',
@@ -193,10 +193,10 @@
            // 添加
           addClass(st) {
             if (st == 'class') {
-              this.classData.title = 'New Food Category'
+              this.classData.title = 'New Dish'
               this.type = '1'
             } else {
-              this.classData.title = 'New Combo Category'
+              this.classData.title = 'New Combo'
               this.type = '2'
             }
             this.action = 'add'

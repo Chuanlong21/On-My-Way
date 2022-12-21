@@ -1,6 +1,7 @@
 package com.chuan.on_my_way.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.chuan.on_my_way.utility.BaseContext;
 import com.chuan.on_my_way.utility.R;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,6 +44,8 @@ public class LoginCheckFilter implements Filter {
         }
 
         if (request.getSession().getAttribute("employee")!=null){
+            Long current = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrent(current);
             filterChain.doFilter(request,response);
             return;
         }

@@ -67,18 +67,17 @@ public class EmployeeController {
     }
 
 
-
     @PostMapping
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
         log.info("");
         String password = "123456";
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         employee.setPassword(password);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        Long userId = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(userId);
-        employee.setUpdateUser(userId);
+
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateUser(userId);
+//        employee.setUpdateUser(userId);
         employeeService.save(employee);
         return R.success("New employee added!!");
     }
@@ -94,6 +93,24 @@ public class EmployeeController {
 
         employeeService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
+    }
+
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(current);
+        employeeService.updateById(employee);
+        return R.success("Update employee successfully!!");
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id){
+        log.info("根据id查询");
+        Employee byId = employeeService.getById(id);
+        if(byId!=null){
+            return R.success(byId);
+        }
+        return R.error("Can't find the user");
     }
 
 }
