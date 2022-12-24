@@ -1,7 +1,8 @@
 package com.chuan.on_my_way.dto;
 
-import com.itheima.reggie.entity.Setmeal;
-import com.itheima.reggie.entity.SetmealDish;
+import com.chuan.on_my_way.entity.Setmeal;
+
+import com.chuan.on_my_way.entity.SetmealDish;
 import lombok.Data;
 import java.util.List;
 
