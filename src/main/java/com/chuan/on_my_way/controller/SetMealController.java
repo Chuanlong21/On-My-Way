@@ -61,6 +61,11 @@ public class SetMealController {
         }).collect(Collectors.toList());
         newPageInfo.setRecords(setmealDtos);
         return R.success(newPageInfo);
+    }
 
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        setmealService.removeWithDish(ids);
+        return R.success("Delete Successfully!");
     }
 }
