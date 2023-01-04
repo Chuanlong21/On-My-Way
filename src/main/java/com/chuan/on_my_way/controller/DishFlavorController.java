@@ -8,7 +8,9 @@ import com.chuan.on_my_way.entity.Dish;
 import com.chuan.on_my_way.service.CategoryService;
 import com.chuan.on_my_way.service.DishFlavorService;
 import com.chuan.on_my_way.service.DishService;
+import com.chuan.on_my_way.utility.CustomException;
 import com.chuan.on_my_way.utility.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/dish")
+@Slf4j
 public class DishFlavorController {
     @Autowired
     private DishFlavorService dishFlavorService;
@@ -79,5 +82,36 @@ public class DishFlavorController {
         List<Dish> list = dishService.list(queryWrapper);
         return R.success(list);
 
+    }
+
+    @PostMapping("/status/{check}")
+    public R<String> soldOut(@PathVariable int check, @RequestParam List<Long> ids){
+        int status = 0;
+        //停售是0，那么我们在数据库里的status就应该是1
+        if (check == 0){
+            status = 1;
+        }
+        //虽然status会返回0或者1，但是我们后端得查询数据库中是否真的停售或者开售
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId,ids);
+        queryWrapper.eq(Dish::getStatus,status);
+        int count = dishService.count(queryWrapper);
+        if (count < ids.size()){
+            throw new CustomException("Can't delete, check your operation!");
+        }
+        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(Dish::getId,ids);
+        List<Dish> list = dishService.list(wrapper);
+        for (Dish dish:list){
+            dish.setStatus(check);
+        }
+        dishService.saveOrUpdateBatch(list);
+        return R.success("Update successfully!");
+    }
+
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        dishService.removeWithFlavor(ids);
+        return R.success("Delete Successfully!");
     }
 }

@@ -3,14 +3,13 @@ package com.chuan.on_my_way.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chuan.on_my_way.dto.DishDto;
-import com.chuan.on_my_way.entity.Dish;
-import com.chuan.on_my_way.entity.DishFlavor;
-import com.chuan.on_my_way.entity.Employee;
+import com.chuan.on_my_way.entity.*;
 import com.chuan.on_my_way.mapper.DishMapper;
 import com.chuan.on_my_way.mapper.EmployeeMapper;
 import com.chuan.on_my_way.service.DishFlavorService;
 import com.chuan.on_my_way.service.DishService;
 import com.chuan.on_my_way.service.EmployeeService;
+import com.chuan.on_my_way.utility.CustomException;
 import com.chuan.on_my_way.utility.R;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +63,20 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish>
             return item;
         }).collect(Collectors.toList());
         flavorService.saveBatch(flavors);
+    }
+
+    @Transactional
+    public void removeWithFlavor(List<Long> ids) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId, ids);
+        queryWrapper.eq(Dish::getStatus,1);
+        int count = this.count(queryWrapper);
+        if (count > 0){
+            throw new CustomException("Dish is on sell, can't delete!");
+        }
+        this.removeByIds(ids);
+        LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(DishFlavor::getDishId,ids);
+        flavorService.remove(lambdaQueryWrapper);
     }
 }
