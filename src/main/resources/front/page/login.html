@@ -22,13 +22,13 @@
         <div id="login" v-loading="loading">
             <div class="divHead">Login</div>
             <div class="divContainer">
-                <el-input placeholder=" Please enter the phone number" v-model="form.phone"  maxlength='20'/></el-input>
+                <el-input placeholder=" Please enter your email" v-model="form.email"  maxlength='100'/></el-input>
                 <div class="divSplit"></div>
                 <el-input placeholder=" Please enter the verification code" v-model="form.code"  maxlength='20'/></el-input>
                 <span @click='getCode'>Get Code</span>
             </div>
-            <div class="divMsg" v-if="msgFlag">Invalid phone，please enter again</div>
-            <el-button type="primary" :class="{btnSubmit:1===1,btnNoPhone:!form.phone,btnPhone:form.phone}" @click="btnLogin">Login</el-button>
+            <div class="divMsg" v-if="msgFlag">Invalid email，please enter again</div>
+            <el-button type="primary" :class="{btnSubmit:1===1,btnNoEmail:!form.email,btnEmail:form.email}" @click="btnLogin">Login</el-button>
         </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
         <script src="../../backend/plugins/vue/vue.js"></script>
@@ -47,7 +47,7 @@
             data(){
                 return {
                     form:{
-                        phone:'',
+                        email:'',
                         code:''
                     },
                     msgFlag:false,
@@ -59,22 +59,22 @@
             mounted(){},
             methods:{
                 getCode(){
-                    this.form.code = ''
-                    const regex = /^(13[0-9]{9})|(15[0-9]{9})|(17[0-9]{9})|(18[0-9]{9})|(19[0-9]{9})$/;
-                    if (regex.test(this.form.phone)) {
+                    const regex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                    if (regex.test(this.form.email)) {
                         this.msgFlag = false
-                        this.form.code = (Math.random()*1000000).toFixed(0)
+                        // this.form.code = (Math.random()*1000000).toFixed(0)
+                        sendMsgApi({email:this.form.email})
                     }else{
                         this.msgFlag = true
                     }
                 },
                 async btnLogin(){
-                    if(this.form.phone && this.form.code){
+                    if(this.form.email && this.form.code){
                         this.loading = true
-                        const res = await loginApi({phone:this.form.phone})
+                        const res = await loginApi({email:this.form.email,code:this.form.code})
                         this.loading = false
                         if(res.code === 1){
-                            sessionStorage.setItem("userPhone",this.form.phone)
+                            sessionStorage.setItem("userEmail",this.form.email)
                             window.requestAnimationFrame(()=>{
                                 window.location.href= '/front/index.html'
                             })                           
@@ -82,7 +82,7 @@
                             this.$notify({ type:'warning', message:res.msg});
                         }
                     }else{
-                        this.$notify({ type:'warning', message:'Please enter phone number'});
+                        this.$notify({ type:'warning', message:'Please enter your email'});
                     }
                 }
             }

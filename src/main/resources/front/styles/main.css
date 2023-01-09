@@ -22,7 +22,7 @@
 
 #main .divTitle {
   width: 345rem;
-  height: 118rem;
+  /*height: 118rem;*/
   opacity: 1;
   background: #ffffff;
   border-radius: 6rem;
@@ -106,7 +106,7 @@
 }
 
 #main .divBody .divType ul {
-  margin-top: 61rem;
+  margin-top: 90rem;
   overflow-y: auto;
   height: calc(100% - 61rem);
   padding-bottom: 200rem;
@@ -144,7 +144,7 @@
 }
 
 #main .divBody .divMenu > div {
-  margin-top: 61rem;
+  margin-top: 90rem;
   overflow-y: auto;
   height: calc(100% - 61rem);
   padding-bottom: 200rem;

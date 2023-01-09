@@ -9,6 +9,26 @@ spring:
       url: jdbc:mysql://localhost:3306/on_my_way?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: jia893607219
+  mail:
+    host: smtp.gmail.com
+    username: onmywayemailtest@gmail.com
+    password: 'cqemkdjhdfjfkkbx'
+    protocol: smtp
+    port: 465
+    default-encoding: utf-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+        display:
+          sendmail: test
+          sendname: Spring Boot Test Email
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
@@ -17,4 +37,4 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 omw:
-  path: E:\project_OMW\img\
+  path: D:\project\img\

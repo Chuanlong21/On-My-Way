@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chuan.on_my_way.dto.DishDto;
 import com.chuan.on_my_way.entity.Category;
 import com.chuan.on_my_way.entity.Dish;
+import com.chuan.on_my_way.entity.DishFlavor;
 import com.chuan.on_my_way.service.CategoryService;
 import com.chuan.on_my_way.service.DishFlavorService;
 import com.chuan.on_my_way.service.DishService;
@@ -74,13 +75,30 @@ public class DishFlavorController {
     }
 
     @GetMapping("/list")
-    public R<List<Dish>> list( Dish dish){
+    public R<List<DishDto>> list( Dish dish){
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId()!= null ,Dish::getCategoryId, dish.getCategoryId());
         queryWrapper.eq(Dish::getStatus,1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+
+        List<DishDto> dishDtos = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            Long categoryId = item.getCategoryId();
+            Category cateName = categoryService.getById(categoryId);
+            if (cateName != null){
+                dishDto.setCategoryName(cateName.getName());
+            }
+            Long dishId = item.getId();
+            LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DishFlavor::getDishId, dishId);
+            List<DishFlavor> list1 = dishFlavorService.list(wrapper);
+            dishDto.setFlavors(list1);
+            return dishDto;
+        }).collect(Collectors.toList());;
+
+        return R.success(dishDtos);
 
     }
 

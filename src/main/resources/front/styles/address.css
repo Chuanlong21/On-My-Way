@@ -73,7 +73,7 @@
 }
 
 #address .divContent .divItem .divAddress span {
-  width: 34rem;
+  /*width: 34rem;*/
   height: 20rem;
   opacity: 1;
   font-size: 12rem;
